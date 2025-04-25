@@ -39,7 +39,7 @@ const Home = () => {
   };
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0]; 
+    const file = e.target.files[0];
     setEditedAd((prev) => ({
       ...prev,
       image: file,
@@ -87,7 +87,7 @@ const Home = () => {
       formData.append("price", editedAd.price);
 
       if (editedAd.image) {
-        formData.append("image", editedAd.image); 
+        formData.append("image", editedAd.image);
       }
 
       const response = await axios.put(
@@ -96,7 +96,7 @@ const Home = () => {
         {
           withCredentials: true,
           headers: {
-            "Content-Type": "multipart/form-data", 
+            "Content-Type": "multipart/form-data",
           },
         }
       );
@@ -162,7 +162,7 @@ const Home = () => {
   const totalPages = Math.ceil(filteredAdvertisements.length / tasksPerPage);
 
   const getImageUrl = (imageUrl) => {
-    if (!imageUrl) return "https://via.placeholder.com/150"; 
+    if (!imageUrl) return "https://via.placeholder.com/150";
 
     if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
       return imageUrl;
@@ -222,7 +222,6 @@ const Home = () => {
                     {currentAdvertisements.length > 0 ? (
                       currentAdvertisements.map((ad, index) => {
                         const displayUrl = getImageUrl(ad.imageUrl);
-                       
 
                         return (
                           <Draggable
@@ -313,7 +312,7 @@ const Home = () => {
                                           src={
                                             ad.imageUrl ||
                                             "https://via.placeholder.com/150"
-                                          } 
+                                          }
                                           alt={ad.title}
                                           className="w-full h-full object-cover"
                                           onError={(e) => {
@@ -332,6 +331,8 @@ const Home = () => {
                                         </div>
                                         <div className="text-sm text-gray-500 mt-1">
                                           Price: ${ad.price}
+                                        </div><div className="text-sm text-gray-500 mt-1">
+                                          Posted By: {ad.user?.name}
                                         </div>
                                       </div>
                                     </div>
@@ -366,36 +367,37 @@ const Home = () => {
                                   )}
                                 </div> */}
                                 <div className="flex flex-wrap gap-2 mt-2 md:mt-0 justify-start md:justify-end">
-  {userId !== ad.userId && (
-    <button
-      className="text-gray-500 hover:text-blue-600"
-      onClick={() => navigate(`/messages/${ad.userId}`)}
-      title="Message"
-    >
-      <FaMessage />
-    </button>
-  )}
-  
-  {!editingAdId && userId === ad.userId && (
-    <div className="flex space-x-2">
-      <button
-        className="text-gray-500 hover:text-blue-600"
-        onClick={() => handleEdit(ad)}
-        title="Edit"
-      >
-        <FaEdit />
-      </button>
-      <button
-        className="text-gray-500 hover:text-red-600"
-        onClick={() => handleDelete(ad.id)}
-        title="Delete"
-      >
-        <FaTrashAlt />
-      </button>
-    </div>
-  )}
-</div>
+                                  {userId !== ad.userId && (
+                                    <button
+                                      className="text-gray-500 hover:text-blue-600"
+                                      onClick={() =>
+                                        navigate(`/messages/${ad.user?.id}`)
+                                      }
+                                      title="Message"
+                                    >
+                                      <FaMessage />
+                                    </button>
+                                  )}
 
+                                  {!editingAdId && userId === ad.userId && (
+                                    <div className="flex space-x-2">
+                                      <button
+                                        className="text-gray-500 hover:text-blue-600"
+                                        onClick={() => handleEdit(ad)}
+                                        title="Edit"
+                                      >
+                                        <FaEdit />
+                                      </button>
+                                      <button
+                                        className="text-gray-500 hover:text-red-600"
+                                        onClick={() => handleDelete(ad.id)}
+                                        title="Delete"
+                                      >
+                                        <FaTrashAlt />
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
                               </li>
                             )}
                           </Draggable>

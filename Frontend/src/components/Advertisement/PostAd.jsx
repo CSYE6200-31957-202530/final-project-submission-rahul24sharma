@@ -75,7 +75,7 @@ const PostAd = () => {
   };
 
   return (
-    <Box display="flex" justifyContent="center" mt={4}>
+    <Box display="flex" justifyContent="center" mt={4} mb={4}>
       <Card sx={{ maxWidth: 600, width: '100%', boxShadow: 3 }}>
         <CardHeader title="Post Your Advertisement" />
         <Divider />

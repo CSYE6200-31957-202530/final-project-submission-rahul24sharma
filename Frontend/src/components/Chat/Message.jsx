@@ -4,12 +4,15 @@ import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import axios from "axios";
 
+import { FaTrash, FaEllipsisV } from "react-icons/fa";
 const Message = () => {
   const [message, setMessage] = useState("");
   const [stompClient, setStompClient] = useState(null);
   const [messages, setMessages] = useState([]);
   const [connected, setConnected] = useState(false);
   const [userNames, setUserNames] = useState({});
+  const [showOptions, setShowOptions] = useState(false);
+  const [selectedMessage, setSelectedMessage] = useState(null);
 
   const { userId } = useParams();
   const currentUserId = localStorage.getItem("userId");
@@ -135,17 +138,96 @@ const Message = () => {
     return userNames[id] || `User ${id}`;
   };
 
+  const deleteMessage = async (messageId) => {
+    try {
+      await axios.delete(`http://localhost:8080/api/chat/messages/${messageId}`);
+      setMessages(messages.filter(msg => msg.id !== messageId));
+    } catch (error) {
+      console.error("Error deleting message:", error);
+    }
+  };
+
+  const clearConversation = async () => {
+    try {
+      await axios.delete(`http://localhost:8080/api/chat/conversations`, {
+        params: {
+          userId: currentUserId,
+          otherUserId: userId
+        }
+      });
+      setMessages([]);
+      setShowOptions(false);
+    } catch (error) {
+      console.error("Error clearing conversation:", error);
+    }
+  };
+
+  const archiveConversation = async () => {
+    try {
+      await axios.post(`http://localhost:8080/api/chat/conversations/archive`, {
+        userId: currentUserId,
+        otherUserId: userId
+      });
+      // Optionally navigate away or show archived status
+      setShowOptions(false);
+    } catch (error) {
+      console.error("Error archiving conversation:", error);
+    }
+  };
+
+  // Add this to your message rendering
+  const renderMessageOptions = (msg) => (
+    <div className="absolute right-0 top-0 mt-1 mr-1">
+      <button 
+        onClick={(e) => {
+          e.stopPropagation();
+          setSelectedMessage(msg.id);
+        }}
+        className="text-gray-500 hover:text-red-500 p-1"
+      >
+        <FaTrash size={12} />
+      </button>
+    </div>
+  );
+
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
+    <div className="flex flex-col h-screen bg-gray-100 relative">
       {/* Status bar */}
       <div className={`py-2 px-4 text-sm font-medium ${connected ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-        Status: {connected ? "Connected" : "Disconnected"}
+        <div className="flex justify-between items-center">
+          <span>Status: {connected ? "Connected" : "Disconnected"}</span>
+          <button 
+            onClick={() => setShowOptions(!showOptions)}
+            className="text-gray-600 hover:text-blue-600 p-1"
+          >
+            <FaEllipsisV />
+          </button>
+        </div>
       </div>
-      
+
+      {/* Conversation options dropdown */}
+      {showOptions && (
+        <div className="absolute right-4 top-12 bg-white shadow-lg rounded-md z-10 w-48">
+          <button 
+            onClick={clearConversation}
+            className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-600"
+          >
+            Clear Conversation
+          </button>
+          {/* <button 
+            onClick={archiveConversation}
+            className="w-full text-left px-4 py-2 hover:bg-gray-100"
+          >
+            Archive Chat
+          </button> */}
+        </div>
+      )}
+
       {/* Chat header */}
-      <div className="bg-blue text-white p-4 shadow-md">
-        <h2 className="text-xl font-bold">Chat with {getUserName(userId)}</h2>
+      <div className="bg-blue-600 text-white p-4 shadow-md relative">
+        <h2 className="text-xl font-bold text-blue">Chat with {getUserName(userId)}</h2>
       </div>
+
       
       {/* Messages container */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-gray-50 to-gray-100">
