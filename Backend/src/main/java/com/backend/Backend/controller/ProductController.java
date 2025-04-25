@@ -36,7 +36,8 @@ import com.backend.Backend.repository.UserRepository;
 public class ProductController {
 
     @Autowired
-    private ProductRepository productRepository;
+    private ProductRepository productRepository;  
+    @Autowired
     private UserRepository userRepository;
 
     @Value("${upload.dir:${user.dir}/uploads}")
@@ -111,7 +112,7 @@ Optional<User> userOptional = userRepository.findById(userId); // Correct way to
             if (resource.exists() && resource.isReadable()) {
                 return ResponseEntity.ok()
                         .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-                        .contentType(MediaType.IMAGE_JPEG) // You might want to detect content type
+                        .contentType(MediaType.IMAGE_JPEG) 
                         .body(resource);
             } else {
                 return ResponseEntity.notFound().build();

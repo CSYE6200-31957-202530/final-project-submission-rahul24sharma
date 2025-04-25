@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux"
 import PostAd from './components/Advertisement/PostAd';
 import Message from './components/Chat/Message';
 import ConversationList from './components/Chat/ConversationList';
+import ProdByUser from './components/Advertisement/ProdByUser';
 const App = () => {
 
   const dispatch = useDispatch();
@@ -64,21 +65,30 @@ const App = () => {
 
   return (
     <Router>
+      <div className="flex flex-col min-h-screen">
         <Navbar isLoggedIn={isAuthorized} />
-        <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/" element={<Home />} />
-        <Route path="/post" element={<PostAd />} />
-        <Route path="*" element={<NotFound />} />
-<Route path="/messages/:userId" element={<Message />} />
-<Route path="/conversations" element={<ConversationList />} />
-        
-      </Routes>
-      <Footer />
+  
+        {/* Main content area should grow to push footer down */}
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/post" element={<PostAd />} />
+            <Route path="/messages/:userId" element={<Message />} />
+            <Route path="/conversations" element={<ConversationList />} />
+            <Route path="/mypostings" element={<ProdByUser />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </main>
+  
+        <Footer />
+      </div>
+  
       <Toaster />
     </Router>
   );
+  
 };
 
 export default App;

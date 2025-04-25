@@ -5,6 +5,7 @@
 package com.backend.Backend.repository;
 
 import com.backend.Backend.model.User;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -12,4 +13,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author rahul
  */
 public interface UserRepository extends JpaRepository<User, Long> {
+     User findByEmail(String email);
+     @Override
+    Optional<User> findById(Long id); 
 }

@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.backend.Backend.controller;
+
 import com.backend.Backend.model.User;
 import com.backend.Backend.repository.UserRepository;
 import java.util.List;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import com.backend.Backend.repository.UserRepository;
 
 /**
  *
@@ -28,11 +31,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 @CrossOrigin(origins = "*")
 public class UserController {
 
-    private final UserRepository userRepository;
-
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping
     public List<User> getAllUsers() {
@@ -41,16 +41,14 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody User user) {
-        // Check if the email has the required domain
         if (user.getEmail() == null || !user.getEmail().endsWith("@northeastern.edu")) {
             return new ResponseEntity<>("Email must be from @northeastern.edu domain", HttpStatus.BAD_REQUEST);
         }
-        
-            if (userRepository.findByEmail(user.getEmail()) != null) {
-        return new ResponseEntity<>("Email already registered", HttpStatus.CONFLICT);
-    }
 
-        // Save the user if the email is valid
+        if (userRepository.findByEmail(user.getEmail()) != null) {
+            return new ResponseEntity<>("Email already registered", HttpStatus.CONFLICT);
+        }
+
         User savedUser = userRepository.save(user);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
@@ -58,47 +56,45 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody User loginRequest) {
         Map<String, Object> response = new HashMap<>();
-        
+
         User user = userRepository.findByEmail(loginRequest.getEmail());
-        
+
         if (user == null) {
             response.put("success", false);
             response.put("message", "User not found");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-        
+
         if (!user.getPassword().equals(loginRequest.getPassword())) {
             response.put("success", false);
             response.put("message", "Invalid password");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
-        
+
         user.setPassword(null);
         response.put("success", true);
         response.put("message", "Login successful");
         response.put("user", user);
         return ResponseEntity.ok(response);
     }
-    
-@GetMapping("/{id}")
-public ResponseEntity<?> getUser(@PathVariable Long id) {
-    Optional<User> user = userRepository.findById(id);
-    if (user.isPresent()) {
-        return new ResponseEntity<>(user.get(), HttpStatus.OK);
-    } else {
-        return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUser(@PathVariable Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            return new ResponseEntity<>(user.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
     }
-}
 
-@PostMapping("/logout")
-public ResponseEntity<?> logoutUser() {
-    // In a stateless API, this is a no-op. You might revoke a token if you implement JWT in the future.
-    Map<String, Object> response = new HashMap<>();
-    response.put("success", true);
-    response.put("message", "User logged out successfully");
+    @PostMapping("/logout")
+    public ResponseEntity<?> logoutUser() {
+        Map<String, Object> response = new HashMap<>();
+        response.put("success", true);
+        response.put("message", "User logged out successfully");
 
-    return ResponseEntity.ok(response);
-}
-
+        return ResponseEntity.ok(response);
+    }
 
 }

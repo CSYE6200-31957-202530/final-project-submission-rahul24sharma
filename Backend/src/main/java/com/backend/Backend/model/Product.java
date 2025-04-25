@@ -1,6 +1,10 @@
 package com.backend.Backend.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Product {
@@ -13,19 +17,20 @@ public class Product {
     private String description;
     private double price;
     private String imageUrl;
-    private Long userId; // assumes user ID is stored like this
+
+    @ManyToOne
+    private User user;
 
     public Product() {}
 
-    public Product(String title, String description, double price, String imageUrl, Long userId) {
+    public Product(String title, String description, double price, String imageUrl, User user) {
         this.title = title;
         this.description = description;
         this.price = price;
         this.imageUrl = imageUrl;
-        this.userId = userId;
+        this.user = user;
     }
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getTitle() { return title; }
@@ -36,6 +41,6 @@ public class Product {
     public void setPrice(double price) { this.price = price; }
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
 }

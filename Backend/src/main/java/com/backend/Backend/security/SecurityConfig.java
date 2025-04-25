@@ -18,13 +18,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors().configurationSource(corsConfigurationSource()) // Enable CORS
+            .cors().configurationSource(corsConfigurationSource())
             .and()
             .authorizeRequests()
-                .requestMatchers("/**").permitAll()
-            .anyRequest().authenticated()
+                .anyRequest().permitAll()
             .and()
-            .csrf().disable();
+            .csrf().disable(); 
 
         return http.build();
     }
@@ -32,13 +31,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000")); // Your frontend URL
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); 
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true);
-        
+        configuration.setAllowCredentials(true); // Allow credentials
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
+        source.registerCorsConfiguration("/**", configuration); 
         return source;
     }
 }

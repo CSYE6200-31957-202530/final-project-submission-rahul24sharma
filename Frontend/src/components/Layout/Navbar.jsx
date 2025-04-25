@@ -124,6 +124,14 @@ const Navbar = () => {
           Conversations
         </NavLink>
       </li>
+      <li>
+        <NavLink
+          to="/mypostings"
+          className={({ isActive }) => (isActive ? "active" : "")}
+        >
+          My Postings
+        </NavLink>
+      </li>
       </>
     )
   ) : null}

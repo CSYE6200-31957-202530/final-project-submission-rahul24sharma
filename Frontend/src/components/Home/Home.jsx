@@ -80,6 +80,8 @@ const Home = () => {
   };
 
   const handleSaveEdit = async (id) => {
+    console.log("Editing advertisement with ID:", id); // Log the ID to the console
+
     try {
       const formData = new FormData();
       formData.append("title", editedAd.title);
@@ -92,6 +94,7 @@ const Home = () => {
 
       const response = await axios.put(
         `${BACKEND_URL}/products/${id}`,
+        
         formData,
         {
           withCredentials: true,
@@ -100,6 +103,8 @@ const Home = () => {
           },
         }
       );
+      console.log("Editing advertisement with ID:", id); // Log the ID to the console
+
 
       setAdvertisements((prev) =>
         prev.map((ad) => (ad.id === id ? response.data : ad))
@@ -315,13 +320,7 @@ const Home = () => {
                                           }
                                           alt={ad.title}
                                           className="w-full h-full object-cover"
-                                          onError={(e) => {
-                                            console.error(
-                                              `Image failed to load: ${ad.imageUrl}`
-                                            );
-                                            e.target.src =
-                                              "https://via.placeholder.com/150";
-                                          }}
+                                         
                                         />
                                       </div>
                                       <div>
@@ -367,7 +366,7 @@ const Home = () => {
                                   )}
                                 </div> */}
                                 <div className="flex flex-wrap gap-2 mt-2 md:mt-0 justify-start md:justify-end">
-                                  {userId !== ad.userId && (
+                                  {userId !== ad.user?.id && (
                                     <button
                                       className="text-gray-500 hover:text-blue-600"
                                       onClick={() =>
@@ -379,7 +378,7 @@ const Home = () => {
                                     </button>
                                   )}
 
-                                  {!editingAdId && userId === ad.userId && (
+                                  {!editingAdId && userId === ad.user?.id && (
                                     <div className="flex space-x-2">
                                       <button
                                         className="text-gray-500 hover:text-blue-600"

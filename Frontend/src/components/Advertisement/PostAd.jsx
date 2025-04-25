@@ -12,6 +12,7 @@ import {
   IconButton
 } from '@mui/material';
 import { PhotoCamera } from '@mui/icons-material';
+import toast from 'react-hot-toast';
 
 const PostAd = () => {
   const user = JSON.parse(localStorage.getItem('user')); 
@@ -66,7 +67,7 @@ const PostAd = () => {
 
       const result = await response.json();
       console.log('Ad created:', result);
-      alert('Advertisement posted successfully!');
+      toast.success('Advertisement posted successfully!');
       setFormData({ title: '', description: '', price: '', image: null });
     } catch (error) {
       console.error(error);

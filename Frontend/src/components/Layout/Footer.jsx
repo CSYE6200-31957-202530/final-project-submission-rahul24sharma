@@ -1,28 +1,31 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import {  FaLinkedin, FaGithub, FaGlobe } from "react-icons/fa";
+import { FaLinkedin, FaGithub } from "react-icons/fa";
 import { RiInstagramFill } from "react-icons/ri";
-import { useSelector } from "react-redux"
+import { useSelector } from "react-redux";
 
 const Footer = () => {
-  
-  const { isAuthorized } = useSelector((state) => {
-    return state.auth;
-  });
-  return (
-    <footer className={isAuthorized ? "footerShow" : "footerHide"}>
-      <div>&copy; NuMoves</div>
-      <div>
-        <Link to={"https://github.com/"} target="_blank">
-          <FaGithub />
-        </Link>
-        <Link to={"hhttps://www.linkedin.com/in/"} target="_blank">
+  const { isAuthorized } = useSelector((state) => state.auth);
 
-          <FaLinkedin />
-        </Link>
-        <Link to={"https://www.instagram.com/"} target="_blank">
-          <RiInstagramFill />
-        </Link>
+  return (
+    <footer
+      className={`${
+        isAuthorized ? "block" : "hidden"
+      } bg-gray-800 text-white py-4 px-6 mt-auto`}
+    >
+      <div className="flex items-center justify-between max-w-6xl mx-auto">
+        <div className="text-sm">&copy; NuMoves</div>
+        <div className="flex space-x-4 text-xl">
+          <Link to="https://github.com/" target="_blank" rel="noopener noreferrer">
+            <FaGithub />
+          </Link>
+          <Link to="https://www.linkedin.com/in/" target="_blank" rel="noopener noreferrer">
+            <FaLinkedin />
+          </Link>
+          <Link to="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">
+            <RiInstagramFill />
+          </Link>
+        </div>
       </div>
     </footer>
   );
