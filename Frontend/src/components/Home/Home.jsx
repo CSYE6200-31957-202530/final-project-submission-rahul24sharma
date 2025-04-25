@@ -73,17 +73,20 @@ const Home = () => {
   const handleEdit = (ad) => {
     setEditingAdId(ad.id);
     setEditedAd({
+      id: ad.id,
       title: ad.title,
       description: ad.description,
       price: ad.price,
     });
   };
 
-  const handleSaveEdit = async (id) => {
-    console.log("Editing advertisement with ID:", id); // Log the ID to the console
+  const handleSaveEdit = async () => {
+    const id = editedAd.id;
+    console.log("Saving advertisement with ID:", id);
 
     try {
       const formData = new FormData();
+      formData.append("userId", userId);
       formData.append("title", editedAd.title);
       formData.append("description", editedAd.description);
       formData.append("price", editedAd.price);
@@ -94,7 +97,6 @@ const Home = () => {
 
       const response = await axios.put(
         `${BACKEND_URL}/products/${id}`,
-        
         formData,
         {
           withCredentials: true,
@@ -103,8 +105,8 @@ const Home = () => {
           },
         }
       );
-      console.log("Editing advertisement with ID:", id); // Log the ID to the console
 
+      console.log("Advertisement updated successfully:", response.data);
 
       setAdvertisements((prev) =>
         prev.map((ad) => (ad.id === id ? response.data : ad))
@@ -118,6 +120,7 @@ const Home = () => {
       } else {
         toast.error("Error updating advertisement: " + error.message);
       }
+
       setEditingAdId(null);
     }
   };
@@ -133,9 +136,11 @@ const Home = () => {
       });
 
       setAdvertisements((prev) => prev.filter((ad) => ad.id !== id));
+      console.log("Fetched ads:", res.data);
+
       toast.success("Advertisement deleted successfully");
     } catch (error) {
-      toast.error(
+      console.log(
         error.response?.data?.error || "Error deleting advertisement"
       );
     }
@@ -270,7 +275,6 @@ const Home = () => {
                                         step="0.01"
                                       />
 
-                                      {/* Image input to select a new image */}
                                       <div className="space-y-2">
                                         <input
                                           type="file"
@@ -291,21 +295,28 @@ const Home = () => {
                                           </div>
                                         )}
                                       </div>
-
-                                      <div className="flex space-x-2">
-                                        <button
-                                          className="bg-green-500 text-white px-3 py-1 rounded"
-                                          onClick={() => handleSaveEdit(ad.id)}
-                                        >
-                                          Save
-                                        </button>
-                                        <button
-                                          className="bg-gray-300 px-3 py-1 rounded"
-                                          onClick={handleCancelEdit}
-                                        >
-                                          Cancel
-                                        </button>
-                                      </div>
+                                      {editedAd && (
+                                        <div className="flex space-x-2">
+                                          <button
+                                            className="bg-green-500 text-white px-3 py-1 rounded"
+                                            onClick={() => {
+                                              console.log(
+                                                "Saving ad with ID:",
+                                                editedAd.id
+                                              );
+                                              handleSaveEdit(editedAd.id);
+                                            }}
+                                          >
+                                            Save
+                                          </button>
+                                          <button
+                                            className="bg-gray-300 px-3 py-1 rounded"
+                                            onClick={handleCancelEdit}
+                                          >
+                                            Cancel
+                                          </button>
+                                        </div>
+                                      )}
                                     </div>
                                   ) : (
                                     <div className="flex items-center gap-2 text-lg font-medium">
@@ -320,7 +331,6 @@ const Home = () => {
                                           }
                                           alt={ad.title}
                                           className="w-full h-full object-cover"
-                                         
                                         />
                                       </div>
                                       <div>
@@ -330,41 +340,14 @@ const Home = () => {
                                         </div>
                                         <div className="text-sm text-gray-500 mt-1">
                                           Price: ${ad.price}
-                                        </div><div className="text-sm text-gray-500 mt-1">
+                                        </div>
+                                        <div className="text-sm text-gray-500 mt-1">
                                           Posted By: {ad.user?.name}
                                         </div>
                                       </div>
                                     </div>
                                   )}
                                 </div>
-
-                                {/* <div className="flex flex-wrap gap-2 mt-2 md:mt-0 justify-start md:justify-end">
-                                <button
-                                        className="text-gray-500 hover:text-blue-600"
-                                        onClick={() => navigate(`/messages/${ad.userId}`)}
-                                        title="Edit"
-                                      >
-                                        <FaMessage />
-                                      </button>
-                                  {!editingAdId && userId === ad.userId && (
-                                    <div className="flex space-x-2">
-                                      <button
-                                        className="text-gray-500 hover:text-blue-600"
-                                        onClick={() => handleEdit(ad)}
-                                        title="Edit"
-                                      >
-                                        <FaEdit />
-                                      </button>
-                                      <button
-                                        className="text-gray-500 hover:text-red-600"
-                                        onClick={() => handleDelete(ad.id)}
-                                        title="Delete"
-                                      >
-                                        <FaTrashAlt />
-                                      </button>
-                                    </div>
-                                  )}
-                                </div> */}
                                 <div className="flex flex-wrap gap-2 mt-2 md:mt-0 justify-start md:justify-end">
                                   {userId !== ad.user?.id && (
                                     <button
@@ -382,7 +365,7 @@ const Home = () => {
                                     <div className="flex space-x-2">
                                       <button
                                         className="text-gray-500 hover:text-blue-600"
-                                        onClick={() => handleEdit(ad)}
+                                        onClick={() => handleEdit(ad || ad.id)}
                                         title="Edit"
                                       >
                                         <FaEdit />

@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 
 /**
  *
- * @author rahul
+ * @author Zainab
  */
 
 @Entity

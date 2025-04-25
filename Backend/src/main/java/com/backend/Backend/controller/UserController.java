@@ -24,7 +24,7 @@ import com.backend.Backend.repository.UserRepository;
 
 /**
  *
- * @author rahul
+ * @author Zainab
  */
 @RestController
 @RequestMapping("/api/users")

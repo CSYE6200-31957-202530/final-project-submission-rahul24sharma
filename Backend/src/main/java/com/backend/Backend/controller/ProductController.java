@@ -28,7 +28,7 @@ import com.backend.Backend.repository.ProductRepository;
 import com.backend.Backend.repository.UserRepository;
 
 /**
- * @author rahul
+ * @author Anusha
  */
 @RestController
 @RequestMapping("/products")

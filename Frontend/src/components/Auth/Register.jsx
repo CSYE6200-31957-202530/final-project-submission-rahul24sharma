@@ -159,18 +159,18 @@ const Register = () => {
           <label className="flex flex-col relative">
             <span className="text-black font-medium mb-4">Phone</span>
             <input
-              type={type}
+              type="phone"
               name="phone"
               placeholder="Enter your phone"
               className="bg-transparent py-2 px-5 placeholder:text-secondary text-black rounded border font-medium pr-12"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={(e) => {
+                const input = e.target.value;
+                if (/^\d*$/.test(input)) {
+                  setPhone(input);
+                }
+              }}
               required
-            />
-            <FontAwesomeIcon
-              className="absolute right-4 bottom-2 transform -translate-y-1/2 cursor-pointer text-black"
-              onClick={handleToggle}
-              icon={icon}
             />
           </label>
           <button
