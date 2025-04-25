@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  *
@@ -35,15 +39,66 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody User user) {
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody User user) {
         // Check if the email has the required domain
         if (user.getEmail() == null || !user.getEmail().endsWith("@northeastern.edu")) {
             return new ResponseEntity<>("Email must be from @northeastern.edu domain", HttpStatus.BAD_REQUEST);
         }
+        
+            if (userRepository.findByEmail(user.getEmail()) != null) {
+        return new ResponseEntity<>("Email already registered", HttpStatus.CONFLICT);
+    }
 
         // Save the user if the email is valid
         User savedUser = userRepository.save(user);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody User loginRequest) {
+        Map<String, Object> response = new HashMap<>();
+        
+        User user = userRepository.findByEmail(loginRequest.getEmail());
+        
+        if (user == null) {
+            response.put("success", false);
+            response.put("message", "User not found");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+        
+        if (!user.getPassword().equals(loginRequest.getPassword())) {
+            response.put("success", false);
+            response.put("message", "Invalid password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+        
+        user.setPassword(null);
+        response.put("success", true);
+        response.put("message", "Login successful");
+        response.put("user", user);
+        return ResponseEntity.ok(response);
+    }
+    
+@GetMapping("/{id}")
+public ResponseEntity<?> getUser(@PathVariable Long id) {
+    Optional<User> user = userRepository.findById(id);
+    if (user.isPresent()) {
+        return new ResponseEntity<>(user.get(), HttpStatus.OK);
+    } else {
+        return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+    }
+}
+
+@PostMapping("/logout")
+public ResponseEntity<?> logoutUser() {
+    // In a stateless API, this is a no-op. You might revoke a token if you implement JWT in the future.
+    Map<String, Object> response = new HashMap<>();
+    response.put("success", true);
+    response.put("message", "User logged out successfully");
+
+    return ResponseEntity.ok(response);
+}
+
+
 }
