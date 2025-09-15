@@ -1,7 +1,7 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/E1wuwIWY)
 
 
-# Numoves  - Spring Boot, ReactJS
+# Numoves  - Spring Boot, ReactJS, SQL
 
 This is the backend for a web-based marketplace application built with **Spring Boot**, supporting user authentication, a SQL database, and real-time messaging using **WebSockets**.
 
